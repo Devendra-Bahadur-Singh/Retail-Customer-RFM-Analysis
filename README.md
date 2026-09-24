@@ -114,4 +114,4 @@ cd YOUR_REPO_NAME
 ## 👤 Author
 
 **Devendra Bahadur Singh**  
-Tableau Public: [@devendra.bahadur.singh](https://public.tableau.com/app/profile/devendra.bahadur.singh/viz/rfm_Book/Dashboard1)
+Tableau Public: [@devendra.bahadur.singh](https://github.com/Devendra-Bahadur-Singh)
