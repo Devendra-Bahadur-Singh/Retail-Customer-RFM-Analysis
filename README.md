@@ -1,1 +1,110 @@
-# Retail Customer RFM Segmentation & Analytics\n\n[![Tableau](https://img.shields.io/badge/Tableau-Interactive_Dashboard-E97627?style=for-the-badge&logo=tableau&logoColor=white)](https://public.tableau.com/app/profile/devendra.bahadur.singh/viz/rfm_Book/Dashboard1)\n[![MySQL](https://img.shields.io/badge/MySQL-Data_Engineering-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](#-data-pipeline--architecture)\n[![Excel](https://img.shields.io/badge/Excel-Validation_&_Audit-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white)](#-data-pipeline--architecture)\n\nAn end-to-end customer analytics pipeline leveraging **SQL**, **Excel**, and **Tableau** to perform Recency, Frequency, and Monetary (RFM) segmentation across **20,000+ raw transactional records**, categorizing **4,328 active accounts** generating **$8.56M in total revenue**.\n\n---\n\n## 🔗 Live Interactive Dashboard\n\n> 📊 **[Click here to view the live interactive dashboard on Tableau Public](https://public.tableau.com/app/profile/devendra.bahadur.singh/viz/rfm_Book/Dashboard1)**\n\n---\n\n## 📌 Executive Summary\n\nRetail customer bases exhibit disparate purchasing behaviors that uniform marketing strategies fail to address. This project establishes an automated analytics workflow to:\n\n1. **Clean & Preprocess:** Filter out returns, non-transactional stock codes, and invalid customer IDs.\n2. **Compute RFM Metrics:** Aggregate Recency (days since last purchase), Frequency (distinct orders), and Monetary Value (total spend) per account using SQL.\n3. **Score & Segment:** Assign quintile scores (1–5) via `NTILE(5)` window functions to classify customers into 6 actionable strategic tiers.\n4. **Identify Revenue Risks:** Uncover churn-risk accounts representing **$711.8K in historic revenue** for targeted re-engagement campaigns.\n\n---\n\n## 📁 Project Structure\n\n```text\n.\n├── Source/\n│   └── data.csv                                 # Raw e-commerce transactional dataset\n├── rfm_script.sql                               # Data cleaning, aggregation & NTILE window logic\n├── rfm_final_segments.csv                       # Processed dataset with RFM scores & segments\n├── rfm_final_segments.xlsx                      # Excel validation workbook & pivot table audit\n├── rfm_final_segments (rfm_final_segments).hyper # Tableau extract data engine file\n├── rfm_Book.twb                                 # Tableau Desktop workbook source\n└── README.md                                    # Documentation\n```\n\n---\n\n## 📊 Customer Cohort Analysis & Insights\n\n| Customer Segment | Customer Count | Share (%) | Total Revenue ($) | Revenue Share (%) | Avg CLV ($) | Strategic Priority |\n| :--- | :---: | :---: | :---: | :---: | :---: | :--- |\n| **High-Value / Champions** | 934 | 21.47% | $5,613,199.29 | 65.59% | $6,009.85 | VIP loyalty perks & early product access |\n| **Loyal Customers** | 862 | 19.82% | $1,340,010.25 | 15.66% | $1,554.54 | Upsell higher-margin product categories |\n| **At-Risk / Need Attention** | 420 | 9.67% | $711,752.17 | 8.32% | $1,694.65 | Win-back email triggers with dynamic discounts |\n| **Occasional Buyers** | 970 | 22.38% | $605,905.89 | 7.08% | $624.65 | Post-purchase cross-sell & free-shipping thresholds |\n| **Lost / Inactive** | 914 | 21.18% | $210,670.71 | 2.46% | $230.49 | Low-cost automated email retargeting |\n| **Recent / New Buyers** | 236 | 5.47% | $75,976.21 | 0.89% | $321.93 | 30-day onboarding drip campaign |\n| **Total** | **4,328** | **100.0%** | **$8,561,514.52** | **100.0%** | **$1,973.60** | - |\n\n### Key Findings\n\n- **Pareto Distribution:** High-Value Champions (21.5% of accounts) drive 65.59% ($5.61M) of gross sales.\n- **Churn Prevention:** 420 At-Risk accounts represent $711.8K in total spend but have been inactive for an average of 124.5 days.\n- **Frequency Bottleneck:** Occasional Buyers constitute the largest customer group (22.38%) but average only 1.69 orders per account.\n\n---\n\n## 🛠️ Data Pipeline & Architecture\n\n```text\n[ Source/data.csv ] ──> ( MySQL: rfm_script.sql ) ──> [ rfm_final_segments.csv ]\n                                                             │\n                             ┌───────────────────────────────┴───────────────────────────────┐\n                             ▼                                                               ▼\n             [ rfm_final_segments.xlsx ]                         [ rfm_Book.twb / .hyper ]\n             (Excel Audit & Pivot Tables)                         (Tableau Public Dashboard)\n```\n\n### 1. Data Cleaning & Engineering (`rfm_script.sql`)\n- Ingests raw transactional logs from `Source/data.csv`.\n- Eliminates records missing `CustomerID`, cancelled orders (prefixed with `C`), and non-inventory fees (e.g., `POSTAGE`, `BANK CHARGES`).\n- Establishes a reference snapshot date based on the maximum transaction timestamp in the dataset.\n- Aggregates Recency (Days elapsed), Frequency (Count of unique `InvoiceNo`), and Monetary (Sum of `Quantity` × `UnitPrice`).\n\n### 2. Scoring & Classification Logic\nComputes individual 1–5 ratings using SQL window functions:\n\n```sql\nNTILE(5) OVER (ORDER BY Recency DESC) AS R_Score,\nNTILE(5) OVER (ORDER BY Frequency ASC)  AS F_Score,\nNTILE(5) OVER (ORDER BY Monetary ASC)   AS M_Score\n```\n\nMaps composite scores to business tiers using explicit `CASE` expressions.\n\n### 3. Business Validation & Visualization\n- **Excel Audit (`rfm_final_segments.xlsx`):** Verified score distribution, summary statistics, and cohort totals using pivot tables.\n- **Tableau (`rfm_Book.twb`):** Connects to `rfm_final_segments (rfm_final_segments).hyper` to display:\n  - **Customer Segment Treemap:** High-level revenue and volume breakdown.\n  - **5x5 RFM Matrix Heatmap:** Cross-tabulation of Recency/Frequency/Monetary scores.\n  - **Logarithmic Scatter Plot:** Spending behavior vs. recency days.\n  - **Interactive Action Filters:** Global dynamic filtering across all views.\n\n---\n\n## 🚀 How to Reproduce\n\n### Database Setup\n1. Import `Source/data.csv` into your SQL database instance (e.g., MySQL Server).\n2. Execute `rfm_script.sql` to clean raw data, generate RFM scores, and export the output table.\n\n### Validation\nOpen `rfm_final_segments.csv` or `rfm_final_segments.xlsx` to review calculated metrics and pivot tables.\n\n### Dashboard\nOpen `rfm_Book.twb` in Tableau Desktop, or access the published version directly via Tableau Public.\n
+# Retail Customer RFM Segmentation & Business Intelligence
+
+![Tableau](https://img.shields.io/badge/Tableau-E97627?style=for-the-badge&logo=Tableau&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Microsoft Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
+
+---
+
+## 🔗 Live Interactive Dashboard
+👉 **[View Interactive Dashboard on Tableau Public](https://public.tableau.com/app/profile/devendra.bahadur.singh/viz/rfm_Book/Dashboard1)**
+
+---
+
+## 📌 Executive Summary
+
+This end-to-end analytics project transforms **20,000+ raw transactional records** into strategic customer intelligence. By executing data engineering pipelines in SQL, validating mathematical distributions in Excel, and visualizing behavioral patterns in Tableau, the analysis isolates **4,328 active customers** driving **$8.56M in total revenue**.
+
+The analysis uncovers a classic Pareto distribution—**21.5% of customers drive 65.6% of overall revenue**—while revealing **$711.8K in churn-risk revenue** across 420 "At-Risk" customer accounts.
+
+---
+
+## 📂 Project Structure
+
+```text
+.
+├── Source/
+│   └── data.csv                                  # Raw e-commerce transaction logs
+├── rfm_script.sql                                 # MySQL data cleaning, aggregation & NTILE scoring script
+├── rfm_final_segments.csv                         # Final processed dataset with RFM scores & segment labels
+├── rfm_final_segments.xlsx                        # Excel audit model with dynamic pivot tables & validations
+├── rfm_Book.twb                                   # Tableau Workbook file containing dashboard layout
+└── rfm_final_segments (rfm_final_segments).hyper  # Tableau extract file for optimized query performance
+```
+
+---
+
+## 🛠️ Data Pipeline & Technical Architecture
+
+```mermaid
+graph LR
+    A[Raw Data: Source/data.csv] -->|Clean & Engineer| B[SQL Pipeline: rfm_script.sql]
+    B -->|NTILE Scoring| C[Processed Output: rfm_final_segments.csv]
+    C -->|Audit & Pareto Test| D[Excel Model: rfm_final_segments.xlsx]
+    C -->|Extract Creation| E[Tableau Hyper: .hyper]
+    E -->|Dashboarding| F[Tableau Workbook: rfm_Book.twb]
+```
+
+### 1. Data Engineering & Preprocessing (`rfm_script.sql`)
+- Filtered non-transactional items, cancelled invoices (C% pattern), null customer identifiers, and zero/negative unit pricing.
+- Consolidated total line-item order values and calculated recency relative to the max transactional baseline date.
+- Computed Recency (days since last purchase), Frequency (distinct invoice count), and Monetary (total customer spend) metrics per account.
+- Applied `NTILE(5)` window functions across R, F, and M distributions to rank accounts from 1 to 5.
+
+### 2. Validation & Quality Control (`rfm_final_segments.xlsx`)
+- Constructed two dynamic pivot tables to verify cross-tabulation across $M$ and $F$ score bands.
+- Verified that segment aggregation totals ($8.56M revenue, 4,328 distinct accounts) matched database metrics with 100% accuracy.
+
+### 3. Interactive Business Intelligence (`rfm_Book.twb`)
+- Engineered a multi-sheet Tableau dashboard with cross-filtering actions across:
+  - **Customer Segment Treemap**: Visualizing revenue and customer density per cohort.
+  - **5x5 RFM Score Matrix Heatmap**: Mapping detailed score combinations.
+  - **Logarithmic Spend Scatter Plot**: Plotting Recency vs. Spend across individual accounts.
+  - **Dynamic Executive KPI Cards**: Summarizing real-time segment revenue, customer counts, and average customer lifetime value.
+
+---
+
+## 📊 Customer Cohort Breakdown
+
+| Customer Segment | Customer Count | Customer Share (%) | Total Revenue ($) | Revenue Share (%) | Avg CLV ($) | Primary Strategic Focus |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **High-Value / Champions** | 934 | 21.47% | $5,613,199.29 | 65.59% | $6,009.85 | VIP loyalty perks, early product access |
+| **Loyal Customers** | 862 | 19.82% | $1,340,010.25 | 15.66% | $1,554.54 | Cross-sell higher-margin categories |
+| **At-Risk / Need Attention** | 420 | 9.67% | $711,752.17 | 8.32% | $1,694.65 | Automated win-back discount campaigns |
+| **Occasional Buyers** | 970 | 22.38% | $605,905.89 | 7.08% | $624.65 | Post-purchase incentives & free shipping thresholds |
+| **Lost / Inactive** | 914 | 21.18% | $210,670.71 | 2.46% | $230.49 | Low-cost automated email retargeting |
+| **Recent / New Buyers** | 236 | 5.47% | $75,976.21 | 0.89% | $321.93 | 30-day onboarding drip series |
+
+---
+
+## 💡 Key Business Insights
+
+- **Pareto Revenue Distribution:** High-Value Champions generate $5.61M (65.59%) of overall revenue despite representing only 21.47% of the customer base.
+- **Significant Revenue at Risk:** The At-Risk / Need Attention segment contains 420 formerly active high-spending customers representing $711.8K in historical value, with an average recency gap exceeding 120 days.
+- **Expansion Opportunity:** Occasional Buyers form the largest single group (970 accounts / 22.38%), but average only $624.65 in spend, offering a prime target for basket-building promotions.
+
+---
+
+## 🚀 How to Reproduce Locally
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+cd YOUR_REPO_NAME
+```
+
+### 2. Execute SQL Script
+- Import `Source/data.csv` into your MySQL instance (`rfm_db`).
+- Execute `rfm_script.sql` to generate the segmented output.
+
+### 3. Explore Dashboard & Data
+- Open `rfm_final_segments.xlsx` to review pivot tables and cohort summaries.
+- Open `rfm_Book.twb` in Tableau Desktop / Public to interact with the visual dashboard.
+
+---
+
+## 👤 Author
+
+**Devendra Bahadur Singh**  
+Tableau Public: [@devendra.bahadur.singh](https://public.tableau.com/app/profile/devendra.bahadur.singh/viz/rfm_Book/Dashboard1)
