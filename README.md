@@ -114,4 +114,5 @@ cd YOUR_REPO_NAME
 ## 👤 Author
 
 **Devendra Bahadur Singh**  
-Tableau Public: [@devendra.bahadur.singh](https://github.com/Devendra-Bahadur-Singh)
+Github: [@devendra.bahadur.singh](https://github.com/Devendra-Bahadur-Singh)
+Linkedin: [@devendra.bahadur.singh](https://www.linkedin.com/in/devendra-bahadur-singh-31133a3a8)
