@@ -5,6 +5,13 @@
 ![Microsoft Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
 
+
+---
+
+![Dashboard Preview](dashboard_preview.png)
+
+---
+                                                                                                                                                                                                                        
 ---
 
 ## 🔗 Live Interactive Dashboard
