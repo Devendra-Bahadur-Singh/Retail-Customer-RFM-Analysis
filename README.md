@@ -97,8 +97,8 @@ graph LR
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
+git clone https://github.com/Devendra-Bahadur-Singh/Retail-Customer-RFM-Analysis.git
+cd Retail-Customer-RFM-Analysis
 ```
 
 ### 2. Execute SQL Script
